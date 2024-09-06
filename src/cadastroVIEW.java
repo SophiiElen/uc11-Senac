@@ -1,3 +1,9 @@
+
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+import javax.swing.JOptionPane;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
@@ -140,16 +146,21 @@ public class cadastroVIEW extends javax.swing.JFrame {
     }//GEN-LAST:event_cadastroNomeActionPerformed
 
     private void btnCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarActionPerformed
-        ProdutosDTO produto = new ProdutosDTO();
-        String nome = cadastroNome.getText();
-        String valor = cadastroValor.getText();
-        String status = "A Venda";
-        produto.setNome(nome);
-        produto.setValor(Integer.parseInt(valor));
-        produto.setStatus(status);
+        ProdutosDTO p = new ProdutosDTO();
         
-        ProdutosDAO produtodao = new ProdutosDAO();
-        produtodao.cadastrarProduto(produto);
+        try {
+            p.setNome(cadastroNome.getText());
+            p.setValor(Integer.parseInt(cadastroValor.getText()));
+            
+            if(ProdutosDAO.cadastrarProduto(p)){
+                JOptionPane.showMessageDialog(null, "Cadastrado com sucesso!"
+                        + "\nNome: " +  p.getNome()
+                        + "\nValor: " + p.getValor()
+                        + "\nStatus: " + p.getStatus());
+            }
+        } catch(SQLException ex){
+        JOptionPane.showMessageDialog(null, "Produto não pode ser cadastrado. Tente novamente!");
+        }
         
     }//GEN-LAST:event_btnCadastrarActionPerformed
 
@@ -191,6 +202,22 @@ public class cadastroVIEW extends javax.swing.JFrame {
                 new cadastroVIEW().setVisible(true);
             }
         });
+    }
+    
+    private boolean verificarCampos() {
+        if (!cadastroNome.getText().isEmpty() && !cadastroValor.getText().isEmpty()) {
+            return true;
+        } else {
+            if (cadastroNome.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Nome não pode estar vazio");
+                return false;
+            }
+            if (cadastroValor.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Valor não pode estar vazia");
+                return false;
+            }
+            return false;
+        }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
