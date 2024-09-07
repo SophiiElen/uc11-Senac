@@ -8,7 +8,6 @@ import javax.swing.JOptionPane;
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-
 /**
  *
  * @author Adm
@@ -141,31 +140,36 @@ public class cadastroVIEW extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void cadastroNomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cadastroNomeActionPerformed
-        
-        
+
+
     }//GEN-LAST:event_cadastroNomeActionPerformed
 
     private void btnCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarActionPerformed
         ProdutosDTO p = new ProdutosDTO();
-        
+
         try {
-            p.setNome(cadastroNome.getText());
-            p.setValor(Integer.parseInt(cadastroValor.getText()));
-            
-            if(ProdutosDAO.cadastrarProduto(p)){
-                JOptionPane.showMessageDialog(null, "Cadastrado com sucesso!"
-                        + "\nNome: " +  p.getNome()
-                        + "\nValor: " + p.getValor()
-                        + "\nStatus: " + p.getStatus());
+            if (verificarCampos() == true) {
+                p.setNome(cadastroNome.getText());
+                p.setValor(Integer.parseInt(cadastroValor.getText()));
+
+                if (ProdutosDAO.cadastrarProduto(p)) {
+                    JOptionPane.showMessageDialog(null, "Cadastrado com sucesso!"
+                            + "\nNome: " + p.getNome()
+                            + "\nValor: " + p.getValor()
+                            + "\nStatus: " + p.getStatus());
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Campos não podem estar vazios");
             }
-        } catch(SQLException ex){
-        JOptionPane.showMessageDialog(null, "Produto não pode ser cadastrado. Tente novamente!");
+
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Produto não pode ser cadastrado. Tente novamente!");
         }
-        
+
     }//GEN-LAST:event_btnCadastrarActionPerformed
 
     private void btnProdutosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProdutosActionPerformed
-        listagemVIEW listagem = new listagemVIEW(); 
+        listagemVIEW listagem = new listagemVIEW();
         listagem.setVisible(true);
     }//GEN-LAST:event_btnProdutosActionPerformed
 
@@ -203,7 +207,7 @@ public class cadastroVIEW extends javax.swing.JFrame {
             }
         });
     }
-    
+
     private boolean verificarCampos() {
         if (!cadastroNome.getText().isEmpty() && !cadastroValor.getText().isEmpty()) {
             return true;

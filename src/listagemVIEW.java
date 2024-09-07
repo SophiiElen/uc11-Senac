@@ -1,17 +1,19 @@
 
 import java.util.ArrayList;
+import java.util.List;
 import javax.swing.table.DefaultTableModel;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-
 /**
  *
  * @author Adm
  */
 public class listagemVIEW extends javax.swing.JFrame {
+
+    private ArrayList<ProdutosDTO> lista = new ArrayList<>();
 
     /**
      * Creates new form listagemVIEW
@@ -137,9 +139,9 @@ public class listagemVIEW extends javax.swing.JFrame {
 
     private void btnVenderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVenderActionPerformed
         String id = id_produto_venda.getText();
-        
+
         ProdutosDAO produtosdao = new ProdutosDAO();
-        
+
         //produtosdao.venderProduto(Integer.parseInt(id));
         listarProdutos();
     }//GEN-LAST:event_btnVenderActionPerformed
@@ -188,6 +190,26 @@ public class listagemVIEW extends javax.swing.JFrame {
         });
     }
 
+    private void listarProdutos() {
+        DefaultTableModel table = (DefaultTableModel) listaProdutos.getModel();
+        conectaDAO dao = new conectaDAO();
+        ProdutosDAO produtosdao = new ProdutosDAO();
+
+        dao.connectDB();
+        table.setRowCount(0);
+        lista = produtosdao.listarProdutos();
+        for (int i = 0; i < lista.size(); i++) {
+            String[] linha = {String.valueOf(lista.get(i).getId()),
+                lista.get(i).getNome(),
+                String.valueOf(lista.get(i).getValor()),
+                lista.get(i).getStatus()};
+            table.addRow(linha);
+        }
+
+        dao.disconnectDB();
+    }
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnVendas;
     private javax.swing.JButton btnVender;
@@ -201,25 +223,4 @@ public class listagemVIEW extends javax.swing.JFrame {
     private javax.swing.JTable listaProdutos;
     // End of variables declaration//GEN-END:variables
 
-    private void listarProdutos(){
-        try {
-            ProdutosDAO produtosdao = new ProdutosDAO();
-            
-            DefaultTableModel model = (DefaultTableModel) listaProdutos.getModel();
-            model.setNumRows(0);
-            
-            ArrayList<ProdutosDTO> listagem = produtosdao.listarProdutos();
-            
-            for(int i = 0; i < listagem.size(); i++){
-                model.addRow(new Object[]{
-                    listagem.get(i).getId(),
-                    listagem.get(i).getNome(),
-                    listagem.get(i).getValor(),
-                    listagem.get(i).getStatus()
-                });
-            }
-        } catch (Exception e) {
-        }
-    
-    }
 }

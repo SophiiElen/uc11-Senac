@@ -7,7 +7,6 @@
  *
  * @author Adm
  */
-
 import java.sql.PreparedStatement;
 import java.sql.Connection;
 import javax.swing.JOptionPane;
@@ -15,46 +14,67 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-
 public class ProdutosDAO {
-    
-    Connection conn;
+
+    //Connection conn;
     PreparedStatement prep;
     ResultSet resultset;
     ArrayList<ProdutosDTO> listagem = new ArrayList<>();
-    
-     public static boolean cadastrarProduto (ProdutosDTO p) throws SQLException{
-        try{
-        conectaDAO conn = new conectaDAO();
-        conn.connectDB();
-        
-        String sql = "INSERT INTO produtos (nome, valor, status) VALUES (?, ?, ?);";
-        PreparedStatement query = conn.getConn().prepareStatement(sql);
-        
-        query.setString(1, p.getNome());
-        query.setString(2, String.valueOf(p.getValor()));
-        p.setStatus("A venda");
-        query.setString(3, p.getStatus());
-        
-        query.execute();
-        
-        conn.disconnectDB();
-        return true;      
-        } catch (SQLException se){
+
+    public static boolean cadastrarProduto(ProdutosDTO p) throws SQLException {
+        try {
+            conectaDAO conn = new conectaDAO();
+            conn.connectDB();
+
+            String sql = "INSERT INTO produtos (nome, valor, status) VALUES (?, ?, ?);";
+            PreparedStatement query = conn.getConn().prepareStatement(sql);
+
+            query.setString(1, p.getNome());
+            query.setString(2, String.valueOf(p.getValor()));
+            p.setStatus("A venda");
+            query.setString(3, p.getStatus());
+
+            query.execute();
+
+            conn.disconnectDB();
+            return true;
+        } catch (SQLException se) {
             System.out.println("Erro ao cadastrar registros no banco de dados");
             return false;
         }
-        
+
     }
-        
-    
-    public ArrayList<ProdutosDTO> listarProdutos(){
-        
+
+    public ArrayList<ProdutosDTO> listarProdutos() {
+        conectaDAO conn = new conectaDAO();
+        conn.connectDB();
+        ArrayList<ProdutosDTO> listagem = new ArrayList<>();
+
+        try {
+            String sql = "SELECT * FROM produtos";
+            prep = conn.getConn().prepareStatement(sql);
+            resultset = prep.executeQuery();
+            
+            /*prep = conn.prepareStatement("SELECT * FROM produtos");
+            resultset = prep.executeQuery();*/
+
+            while (resultset.next()) {
+                ProdutosDTO produto = new ProdutosDTO();
+
+                produto.setId(Integer.valueOf(resultset.getString("id")));
+                produto.setNome(resultset.getString("nome"));
+                produto.setValor(Integer.valueOf(resultset.getString("valor")));
+                produto.setStatus(resultset.getString("status"));
+                listagem.add(produto);
+            }
+
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, ex.getErrorCode());
+        } finally {
+            conn.disconnectDB();
+        }
+
         return listagem;
     }
-    
-    
-    
-        
-}
 
+}
