@@ -54,10 +54,9 @@ public class ProdutosDAO {
             String sql = "SELECT * FROM produtos";
             prep = conn.getConn().prepareStatement(sql);
             resultset = prep.executeQuery();
-            
+
             /*prep = conn.prepareStatement("SELECT * FROM produtos");
             resultset = prep.executeQuery();*/
-
             while (resultset.next()) {
                 ProdutosDTO produto = new ProdutosDTO();
 
@@ -75,6 +74,39 @@ public class ProdutosDAO {
         }
 
         return listagem;
+    }
+
+    public void venderProduto(int produtoId) throws SQLException {
+        conectaDAO conn = new conectaDAO();
+        conn.connectDB();
+        String sql = "UPDATE produtos SET status = 'Vendido' WHERE id = ?";
+        PreparedStatement prep = null;
+
+        try {
+            prep = conn.getConn().prepareStatement(sql);
+            prep.setInt(1, produtoId);
+            prep.executeUpdate();
+            System.out.println("Produto atualizado para 'Vendido' com sucesso.");
+            
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar o status do produto: " + e.getMessage());
+        } 
+        finally {
+            if (prep != null) {
+                try {
+                    prep.close();
+                } catch (SQLException e) {
+                    System.out.println("Erro ao fechar o PreparedStatement: " + e.getMessage());
+                }
+            }
+            if (conn != null) {
+                try {
+                    conn.getConn().close();
+                } catch (SQLException e) {
+                    System.out.println("Erro ao fechar a conexão: " + e.getMessage());
+                }
+            }
+        }
     }
 
 }
