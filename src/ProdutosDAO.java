@@ -16,10 +16,8 @@ import java.util.ArrayList;
 
 public class ProdutosDAO {
 
-    //Connection conn;
     PreparedStatement prep;
     ResultSet resultset;
-    ArrayList<ProdutosDTO> listagem = new ArrayList<>();
 
     public static boolean cadastrarProduto(ProdutosDTO p) throws SQLException {
         try {
@@ -55,8 +53,6 @@ public class ProdutosDAO {
             prep = conn.getConn().prepareStatement(sql);
             resultset = prep.executeQuery();
 
-            /*prep = conn.prepareStatement("SELECT * FROM produtos");
-            resultset = prep.executeQuery();*/
             while (resultset.next()) {
                 ProdutosDTO produto = new ProdutosDTO();
 
@@ -87,11 +83,10 @@ public class ProdutosDAO {
             prep.setInt(1, produtoId);
             prep.executeUpdate();
             System.out.println("Produto atualizado para 'Vendido' com sucesso.");
-            
+
         } catch (SQLException e) {
             System.out.println("Erro ao atualizar o status do produto: " + e.getMessage());
-        } 
-        finally {
+        } finally {
             if (prep != null) {
                 try {
                     prep.close();
@@ -107,6 +102,35 @@ public class ProdutosDAO {
                 }
             }
         }
+    }
+
+    public ArrayList<ProdutosDTO> listarProdutosVendidos() {
+        conectaDAO conn = new conectaDAO();
+        conn.connectDB();
+        ArrayList<ProdutosDTO> listagemVendidos = new ArrayList<>();
+
+        try {
+            String sql = "SELECT * FROM produtos WHERE status = 'Vendido'";
+            prep = conn.getConn().prepareStatement(sql);
+            resultset = prep.executeQuery();
+
+            while (resultset.next()) {
+                ProdutosDTO produto = new ProdutosDTO();
+
+                produto.setId(Integer.valueOf(resultset.getString("id")));
+                produto.setNome(resultset.getString("nome"));
+                produto.setValor(Integer.valueOf(resultset.getString("valor")));
+                produto.setStatus(resultset.getString("status"));
+                listagemVendidos.add(produto);
+            }
+
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, ex.getErrorCode());
+        } finally {
+            conn.disconnectDB();
+        }
+
+        return listagemVendidos;
     }
 
 }
